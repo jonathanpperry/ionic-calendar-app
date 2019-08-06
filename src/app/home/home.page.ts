@@ -4,6 +4,9 @@ import * as moment from 'moment';
 import { ViewChild } from '@angular/core';
 import { CalendarComponent } from 'ionic2-calendar/calendar';
 import { OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
+import { Inject } from '@angular/core';
+import { LOCALE_ID } from '@angular/core';
 
 @Component({
   selector: 'app-home',
@@ -38,6 +41,7 @@ export class HomePage implements OnInit {
     public navCtrl: NavController,
     private modalCtrl: ModalController,
     private alertController: AlertController,
+    @Inject(LOCALE_ID) private locale: string,
   ) {
     this.viewTitle = "Calendar App"
   }
@@ -68,15 +72,21 @@ export class HomePage implements OnInit {
   }
 
   changeMode(mode) {
-
+    this.calendar.mode = mode;
   }
 
   back() {
-
+    var swiper = document.querySelector('.swiper-container')['swiper'];
+    swiper.slidePrev();
   }
 
   next() {
-    
+    var swiper = document.querySelector('.swiper-container')['swiper'];
+    swiper.slideNext();
+  }
+
+  today() {
+    this.calendar.currentDate = new Date();
   }
 
   resetEvent() {
@@ -95,22 +105,22 @@ export class HomePage implements OnInit {
   }
 
   onTimeSelected(ev) {
-    this.selectedDay = ev.selectedTime;
+    let selected = new Date(ev.selectedTime);
+    this.event.startTime = selected.toISOString();
+    this.selectedDay.setHours(selected.getHours() + 1);
+    this.event.endTime = (selected.toISOString());
   }
 
   async onEventSelected(event) {
-    let start = moment(event.startTime).format('LLLL');
-    let end = moment(event.endTime).format('LLLL');
+    let start = formatDate(event.startTime, 'medium', this.locale);
+    let end = formatDate(event.endTime, 'medium', this.locale);
 
-    this.presentAlert(event.title, start, end);
-  }
-
-  async presentAlert(title, start, end) {
     const alert = await this.alertController.create({
-      header: '' + title,
-      subHeader: 'From: ' + start + '<br>To: ' + end,
+      header: '' + event.title,
+      subHeader: event.desc,
+      message: 'From: ' + start + '<br><br>To: ' + end,
       buttons: ['OK']
     });
-    await alert.present();
+    alert.present();
   }
 }
