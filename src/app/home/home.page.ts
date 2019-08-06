@@ -1,15 +1,32 @@
 import { Component } from '@angular/core';
 import { NavController, ModalController, AlertController } from '@ionic/angular';
 import * as moment from 'moment';
+import { ViewChild } from '@angular/core';
+import { CalendarComponent } from 'ionic2-calendar/calendar';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
+
+  event = {
+    title: '',
+    desc: '',
+    startTime: '',
+    endTime: '',
+    allDay: false
+  }
+
+  minDate = new Date().toISOString();
+
   eventSource = [];
   viewTitle: string;
+
+  @ViewChild(CalendarComponent, {static: false}) myCal: CalendarComponent;
+
   selectedDay = new Date();
 
   calendar = {
@@ -25,9 +42,24 @@ export class HomePage {
     this.viewTitle = "Calendar App"
   }
 
+  ngOnInit() {
+    this.resetEvent();
+  }
+
   addEvent() {
 
   }
+
+  resetEvent() {
+    this.event = {
+      title: '',
+      desc: '',
+      startTime: new Date().toISOString(),
+      endTime: new Date().toISOString(),
+      allDay: false  
+    };
+  }
+
 
   onViewTitleChanged(title) {
     this.viewTitle = title;
@@ -48,8 +80,8 @@ export class HomePage {
     const alert = await this.alertController.create({
       header: '' + title,
       subHeader: 'From: ' + start + '<br>To: ' + end,
-      buttons: ['OK']    });
+      buttons: ['OK']
+    });
     await alert.present();
   }
-
 }

@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="primary">
     <ion-title>
       {{ viewTitle }}
     </ion-title>
@@ -12,15 +12,32 @@
 </ion-header>
 
 <ion-content>
-  <calendar [eventSource]="eventSource"
+
+  <ion-card>
+    <ion-card-header tappable (click)="collapseCard = !collapseCard">
+      <ion-card-title>New Event</ion-card-title>
+    </ion-card-header>
+    <ion-card-content *ngIf="!collapseCard">
+      <ion-item>
+        <ion-input type="text" placeholder="Title" [(ngModel)]="event.title"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-input type="text"></ion-input>
+      </ion-item>
+    </ion-card-content>
+  </ion-card>
+
+  <calendar
+    [eventSource]="eventSource"
     [calendarMode]="calendar.mode"
     [currentDate]="calendar.currentDate"
     (onEventSelected)="onEventSelected($event)"
     (onTitleChanged)="onViewTitleChanged($event)"
     (onTimeSelected)="onTimeSelected($event)"
+    startHour="6"
+    endHour="20"
     step="30"
-    class="calendar">
-
+    startingDayWeek="0"
+  >
   </calendar>
-
 </ion-content>
